@@ -23,38 +23,41 @@ def main(argv):
     phone = None
     password = None
     config = None
+    debug = False
 
     try:
 
-      opts, args = getopt.getopt(argv, "u:c:d", ["user=", "config=", "debug="])
+        opts, args = getopt.getopt(argv, "u:c:d", ["user=", "config=", "debug="])
 
     except getopt.GetoptError:
 
-      print 'whatsapp-secretary.py -u <phone:password> -c <config> -d <debug>'
-      sys.exit(2)
+        print 'whatsapp-secretary.py -u <phone:password> -c <config> -d <debug>'
+        sys.exit(2)
 
     for opt, arg in opts:
 
-      if opt in ("-u", "--user"):
+        if opt in ("-u", "--user"):
 
-         user = arg.split('.')
-         phone = user[0]
-         password = user[1]
+            user = arg.split(':')
+            phone = user[0]
+            password = user[1]
 
-      elif opt in ("-c", "--config"):
+        elif opt in ("-c", "--config"):
 
-         config = load(os.path.abspath(arg))
+            config = load(os.path.abspath(arg))
 
-      elif opt in ("-d", "--debug"):
+        elif opt in ("-d", "--debug"):
 
-          logging.basicConfig(level=logging.CRITICAL)
+            debug = True
+
+    logging.basicConfig(level=logging.DEBUG if debug else logging.CRITICAL)
 
     run(phone, password, config)
 
 
 def run(phone, password, config):
 
-    CREDENTIALS = (phone, password)
+    credentials = (phone.encode(), password.encode())
 
     layers = (
         secretary(config),
@@ -65,13 +68,13 @@ def run(phone, password, config):
     stack = YowStack(layers)
 
     # Setting credentials
-    stack.setProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS, CREDENTIALS)
+    stack.setProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS, credentials)
 
     # Whatsapp server address
     stack.setProp(YowNetworkLayer.PROP_ENDPOINT, YowConstants.ENDPOINTS[0])
 
     # Info about us as WhatsApp client
-    stack.setProp(YowCoderLayer.PROP_DOMAIN, YowConstants.DOMAIN)              
+    stack.setProp(YowCoderLayer.PROP_DOMAIN, YowConstants.DOMAIN)
     stack.setProp(YowCoderLayer.PROP_RESOURCE, env.CURRENT_ENV.getResource())
 
     # Sending the connect signal

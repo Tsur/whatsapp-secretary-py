@@ -25,6 +25,10 @@ def accepted(rules, text):
     only = rules.get('only', None)
 
     if only:
+
+        if type(only) is not str:
+            return any([word.lower() in text.lower() for word in only])
+
         return only.lower() in text.lower()
 
     return False

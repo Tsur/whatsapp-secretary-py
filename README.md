@@ -2,6 +2,8 @@
 
 Tell your whatsapp secretary to just let you know what's important for you.
 
+Note: This is very much a work in progress. It may not work as expected.
+
 # Setting up
 
 ```bash

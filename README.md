@@ -14,10 +14,6 @@ Now create a config.json file as below:
 
 ```js
 {
-  "phone": "YOUR_PHONE",
-  "password": "YOUR_PASSWORD",
-  "secretary": {
-
     "PHONE_NUMBER": {
 
       "only": ["word1", "word2"],
@@ -37,13 +33,11 @@ Now create a config.json file as below:
       "ignore": ["word1", "word2"]
 
     }
-
-  }
 }
 ```
 
 And finally just run it:
 
 ```bash
-./whatsapp-secretary.py config.json
+./whatsapp-secretary.py -c config.json -u user:password
 ```

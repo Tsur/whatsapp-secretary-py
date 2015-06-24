@@ -18,7 +18,7 @@ def get_text(message):
 
 def get_rules(sender, config):
 
-    return config.get("rules", dict()).get(sender, None)
+    return config.get(sender, None)
 
 def accepted(rules, text):
 

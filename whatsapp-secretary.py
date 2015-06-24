@@ -1,37 +1,83 @@
 #/bin/env python
 
-import os
 import logging
-from layer import Layer, Config
+import sys
+import getopt
+import os
+from layer import secretary
+from config import load
 from yowsup.layers.auth import YowAuthenticationProtocolLayer
 from yowsup.layers.protocol_messages import YowMessagesProtocolLayer
 from yowsup.layers.protocol_receipts import YowReceiptProtocolLayer
 from yowsup.layers.protocol_acks import YowAckProtocolLayer
 from yowsup.layers.network import YowNetworkLayer
 from yowsup.layers.coder import YowCoderLayer
-from yowsup.stacks import YowStack
+from yowsup.layers.axolotl import YowAxolotlLayer
 from yowsup.common import YowConstants
 from yowsup.layers import YowLayerEvent
 from yowsup.stacks import YowStack, YOWSUP_CORE_LAYERS
 from yowsup import env
 
-logging.basicConfig(level=logging.DEBUG)
+def main(argv):
 
-if __name__==  "__main__":
+    phone = None
+    password = None
+    config = None
 
-    CREDENTIALS = (Config.get('phone'), Config.get('password'))
+    try:
+
+      opts, args = getopt.getopt(argv, "u:c:d", ["user=", "config=", "debug="])
+
+    except getopt.GetoptError:
+
+      print 'whatsapp-secretary.py -u <phone:password> -c <config> -d <debug>'
+      sys.exit(2)
+
+    for opt, arg in opts:
+
+      if opt in ("-u", "--user"):
+
+         user = arg.split('.')
+         phone = user[0]
+         password = user[1]
+
+      elif opt in ("-c", "--config"):
+
+         config = load(os.path.abspath(arg))
+
+      elif opt in ("-d", "--debug"):
+
+          logging.basicConfig(level=logging.CRITICAL)
+
+    run(phone, password, config)
+
+
+def run(phone, password, config):
+
+    CREDENTIALS = (phone, password)
 
     layers = (
-        Layer,
-        (YowAuthenticationProtocolLayer, YowMessagesProtocolLayer, YowReceiptProtocolLayer, YowAckProtocolLayer)
+        secretary(config),
+        (YowAuthenticationProtocolLayer, YowMessagesProtocolLayer, YowReceiptProtocolLayer, YowAckProtocolLayer),
+        YowAxolotlLayer,
     ) + YOWSUP_CORE_LAYERS
 
     stack = YowStack(layers)
-    stack.setProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS, CREDENTIALS)         #setting credentials
-    stack.setProp(YowNetworkLayer.PROP_ENDPOINT, YowConstants.ENDPOINTS[0])    #whatsapp server address
+
+    # Setting credentials
+    stack.setProp(YowAuthenticationProtocolLayer.PROP_CREDENTIALS, CREDENTIALS)
+
+    # Whatsapp server address
+    stack.setProp(YowNetworkLayer.PROP_ENDPOINT, YowConstants.ENDPOINTS[0])
+
+    # Info about us as WhatsApp client
     stack.setProp(YowCoderLayer.PROP_DOMAIN, YowConstants.DOMAIN)              
-    stack.setProp(YowCoderLayer.PROP_RESOURCE, env.CURRENT_ENV.getResource())          #info about us as WhatsApp client
+    stack.setProp(YowCoderLayer.PROP_RESOURCE, env.CURRENT_ENV.getResource())
 
-    stack.broadcastEvent(YowLayerEvent(YowNetworkLayer.EVENT_STATE_CONNECT))   #sending the connect signal
+    # Sending the connect signal
+    stack.broadcastEvent(YowLayerEvent(YowNetworkLayer.EVENT_STATE_CONNECT))
 
-    stack.loop() #this is the program mainloop
+    stack.loop()
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

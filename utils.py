@@ -1,3 +1,5 @@
+import re
+
 def filter_message(message, config):
 
     if not message:
@@ -18,9 +20,12 @@ def get_text(message):
 
 def get_rules(sender, config):
 
-    return config.get(sender, None)
+    return config.get(re.sub(r"\@.*$", "", sender), None)
 
 def accepted(rules, text):
+
+    if not rules or not text:
+        return False
 
     only = rules.get('only', None)
 

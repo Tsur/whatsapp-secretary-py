@@ -39,5 +39,11 @@ Now create a config.json file as below:
 And finally just run it:
 
 ```bash
-./whatsapp-secretary.py -c config.json -u user:password
+./whatsapp-secretary.py -c config.json -u "user:password"
 ```
+
+## Troubleshooting
+
+> TypeError: Incorrect padding
+
+This might fails cause of an incorrect password, check it ends with a "=" character. This type error is raised by base64.b64decode(pb64) at line 34 in file yowsup/layers/auth/layer_authentication.py, method __getCredentials, yowsup2 version 2.3.123, b64decode(pb64) calls binascii.a2b_base64(password). Try a python session, then import binascii, and make sure binascii.a2b_base64(password) does not raises any error.

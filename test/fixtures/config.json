@@ -1,0 +1,12 @@
+{
+    "whitelist": "*",
+    "blacklist": [],
+
+    "NUMBER1": {
+
+      "only": "only"
+
+    },
+
+    "*": "*"
+}

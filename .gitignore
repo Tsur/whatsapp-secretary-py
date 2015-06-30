@@ -1,5 +1,6 @@
 config.json
 config.ini
 config.cfg
+*.egg-info
 *.pyc
 .idea

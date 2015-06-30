@@ -20,12 +20,15 @@ def get_text(message):
 
 def get_rules(sender, config):
 
-    return config.get(re.sub(r"\@.*$", "", sender), None)
+    return config.get(re.sub(r"\@.*$", "", sender), None) or config.get("*", None)
 
 def accepted(rules, text):
 
     if not rules or not text:
         return False
+
+    if rules is "*":
+        return True
 
     only = rules.get('only', None)
 

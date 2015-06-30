@@ -57,6 +57,7 @@ def main(argv):
 
 def run(phone, password, config):
 
+    # @TODO check phone, password is set
     credentials = (phone.encode(), password.encode())
 
     layers = (
@@ -81,6 +82,3 @@ def run(phone, password, config):
     stack.broadcastEvent(YowLayerEvent(YowNetworkLayer.EVENT_STATE_CONNECT))
 
     stack.loop()
-
-if __name__ == "__main__":
-    main(sys.argv[1:])

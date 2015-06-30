@@ -1,0 +1,3 @@
+Version: 0.0.10
+	Compatible with Yowsup 2.3+
+	Just working the "only" filter

@@ -1,11 +1,14 @@
-from utils import get_rules, accepted
-from config import load
+import os
+from whatsapp_secretary.utils import get_rules, accepted
+from whatsapp_secretary.config import load
+
+CONFIG_FILE = os.path.abspath('test/fixtures/config.json')
 
 def test_get_rules():
 
-    config = load("config.json")
+    config = load(CONFIG_FILE)
 
-    rules = get_rules("NUMBER", config)
+    rules = get_rules("NUMBER1", config)
 
     assert rules == {'only': 'only'}
 

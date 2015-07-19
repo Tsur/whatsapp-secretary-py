@@ -10,10 +10,6 @@ As a developer, I'm working too many hours with a text editor and several termin
 
 # Setting up
 
-```bash
-pip install whatsapp-secretary
-```
-
 Now create a config.json file as below:
 
 ```js
@@ -43,7 +39,7 @@ Now create a config.json file as below:
 And finally just run it:
 
 ```bash
-whatsapp-secretary -c config.json -u "user:password"
+python ./whatsapp-secretary -c config.json -u "phone:password"
 ```
 
 ## Troubleshooting
